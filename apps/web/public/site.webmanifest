@@ -1,0 +1,16 @@
+{
+  "name": "Landmark Gayrimenkul Yatırım Hizmetleri",
+  "short_name": "Landmark",
+  "description": "Profesyonel gayrimenkul yatırım hizmetleri ve sigorta hizmetleri",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0E3B37",
+  "icons": [
+    {
+      "src": "/assets/logo/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

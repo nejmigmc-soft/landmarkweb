@@ -1,0 +1,21 @@
+﻿# Node / Next / Nest
+node_modules/
+.next/
+dist/
+out/
+coverage/
+
+# Prisma
+node_modules/.prisma/
+
+# Env (saklı)
+.env
+apps/*/.env
+packages/*/.env
+
+# IDE/OS/Logs
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log

@@ -1,0 +1,1 @@
+DATABASE_URL="mysql://landmar5_nejmi:Nejmi440520!@localhost:3306/landmar5_landmarkyhdb"
