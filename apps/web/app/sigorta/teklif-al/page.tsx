@@ -1,18 +1,22 @@
 'use client';
 
 import { motion } from '@/lib/motion';
+import { Suspense } from 'react';
 import InsuranceQuoteForm from '@/components/insurance/InsuranceQuoteForm';
 import { Shield, CheckCircle, Clock } from 'lucide-react';
 import InsuranceSteps from '@/components/insurance/InsuranceSteps';
 
+export const dynamic = 'force-dynamic';
+
 export default function InsuranceQuotePage() {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="min-h-screen bg-background py-20"
-    >
+    <Suspense fallback={<div className="container mx-auto px-4 py-20">Yükleniyor…</div>}>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="min-h-screen bg-background py-20"
+      >
       <div className="container mx-auto px-4">
         {/* Header */}
         <motion.div
@@ -121,6 +125,7 @@ export default function InsuranceQuotePage() {
           </motion.div>
         </div>
       </div>
-    </motion.div>
+      </motion.div>
+    </Suspense>
   );
 }

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAdmin } from '@/hooks/useAdmin';
-import { adminApi } from '@/lib/admin-api';
+import { adminApi, type Property } from '@/lib/admin-api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -12,13 +12,7 @@ import { Plus, Home, Users, DollarSign, TrendingUp } from 'lucide-react';
 
 interface DashboardStats {
   totalProperties: number;
-  recentProperties: Array<{
-    id: string;
-    title: string;
-    price: number;
-    currency: string;
-    createdAt: string;
-  }>;
+  recentProperties: Property[];
 }
 
 export default function AdminDashboardPage() {
@@ -175,12 +169,12 @@ export default function AdminDashboardPage() {
                         {property.title}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {new Date(property.createdAt).toLocaleDateString('tr-TR')}
+                        {property.createdAt ? new Date(property.createdAt).toLocaleDateString('tr-TR') : 'Tarih yok'}
                       </p>
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-medium text-gray-900">
-                        {property.price.toLocaleString('tr-TR')} {property.currency}
+                        {property.price ? property.price.toLocaleString('tr-TR') : 'Fiyat yok'} {property.currency || ''}
                       </p>
                     </div>
                   </div>

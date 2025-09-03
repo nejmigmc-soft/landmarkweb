@@ -145,11 +145,8 @@ export class AdminService {
       where: { id },
       data: {
         ...propertyData,
-        price: propertyData.price !== undefined ? propertyData.price : undefined,
-        location:
-          propertyData.location !== undefined
-            ? (propertyData.location as unknown as Prisma.InputJsonValue)
-            : undefined,
+        price: propertyData.price ?? undefined,
+        location: propertyData.location as unknown as Prisma.InputJsonValue,
         ...(Array.isArray(tags)
           ? {
               tags: {

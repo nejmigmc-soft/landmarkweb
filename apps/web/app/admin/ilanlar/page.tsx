@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAdmin } from '@/hooks/useAdmin';
-import { adminApi } from '@/lib/admin-api';
+import { adminApi, type Property, type PropertiesResponse } from '@/lib/admin-api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,32 +11,7 @@ import { Skeleton } from '@/components/ui/Skeleton';
 import { motion } from '@/lib/motion';
 import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
 
-interface Property {
-  id: string;
-  title: string;
-  slug: string;
-  price: number;
-  currency: string;
-  type: string;
-  status: string;
-  published: boolean;
-  createdAt: string;
-  agent: {
-    name: string;
-  };
-  images: Array<{
-    url: string;
-    alt?: string;
-  }>;
-}
 
-interface PropertiesResponse {
-  items: Property[];
-  total: number;
-  page: number;
-  take: number;
-  totalPages: number;
-}
 
 export default function AdminPropertiesPage() {
   const { user, loading, logout } = useAdmin();
@@ -169,7 +144,7 @@ export default function AdminPropertiesPage() {
                 >
                   <Card className="h-full">
                     <div className="aspect-video bg-gray-200 rounded-t-lg overflow-hidden">
-                      {property.images.length > 0 ? (
+                      {property.images && property.images.length > 0 ? (
                         <img
                           src={property.images[0].url}
                           alt={property.images[0].alt || property.title}
@@ -203,7 +178,7 @@ export default function AdminPropertiesPage() {
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-600">Fiyat:</span>
                           <span className="font-semibold">
-                            {property.price.toLocaleString('tr-TR')} {property.currency}
+                            {property.price ? property.price.toLocaleString('tr-TR') : 'Fiyat yok'} {property.currency || ''}
                           </span>
                         </div>
                         
@@ -214,13 +189,13 @@ export default function AdminPropertiesPage() {
                         
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-600">Danışman:</span>
-                          <span className="text-sm">{property.agent.name}</span>
+                          <span className="text-sm">{property.agent?.name || 'Bilinmiyor'}</span>
                         </div>
                         
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-600">Tarih:</span>
                           <span className="text-sm">
-                            {new Date(property.createdAt).toLocaleDateString('tr-TR')}
+                            {property.createdAt ? new Date(property.createdAt).toLocaleDateString('tr-TR') : 'Tarih yok'}
                           </span>
                         </div>
                       </div>

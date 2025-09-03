@@ -2,16 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { adminApi } from '@/lib/admin-api';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  phone?: string;
-  createdAt: string;
-}
+import { adminApi, type User } from '@/lib/admin-api';
 
 export function useAdmin() {
   const [user, setUser] = useState<User | null>(null);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { motion } from '@/lib/motion';
 import { useSearchParams, useRouter } from 'next/navigation';
 import FiltersBar from '@/components/FiltersBar';
@@ -8,6 +8,8 @@ import PropertyCard from '@/components/PropertyCard';
 import { PropertyGridSkeleton } from '@/components/ui/Skeleton';
 import { Button } from '@/components/ui/button';
 import { Building2, Filter, X, Loader2 } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
 
 interface Property {
   id: string;
@@ -32,7 +34,7 @@ interface Property {
   }>;
 }
 
-export default function ListingsPage() {
+function ListingsPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [items, setItems] = useState<Property[]>([]);
@@ -282,5 +284,13 @@ export default function ListingsPage() {
         )}
       </div>
     </motion.div>
+  );
+}
+
+export default function ListingsPageWrapper() {
+  return (
+    <Suspense fallback={<div className="container mx-auto px-4 py-20">Yükleniyor…</div>}>
+      <ListingsPageContent />
+    </Suspense>
   );
 }

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAdmin } from '@/hooks/useAdmin';
-import { adminApi } from '@/lib/admin-api';
+import { adminApi, type Property } from '@/lib/admin-api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,6 +15,8 @@ import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import ImageUploader from '@/components/admin/ImageUploader';
 import Link from 'next/link';
 
+type RouteParams = { id?: string };
+
 interface UploadedFile {
   url: string;
   key: string;
@@ -24,39 +26,7 @@ interface UploadedFile {
   isCover: boolean;
 }
 
-interface Property {
-  id: string;
-  title: string;
-  slug: string;
-  description: string;
-  type: string;
-  status: string;
-  price: number;
-  currency: string;
-  rooms: string;
-  bath?: number;
-  netM2?: number;
-  grossM2?: number;
-  floor?: number;
-  totalFloor?: number;
-  heating?: string;
-  age?: number;
-  furnished?: boolean;
-  location: {
-    city: string;
-    district: string;
-    neighborhood?: string;
-    address?: string;
-  };
-  published: boolean;
-  agentId: string;
-  images: Array<{
-    id: string;
-    url: string;
-    alt?: string;
-    order: number;
-  }>;
-}
+
 
 const PROPERTY_TYPES = [
   { value: 'DAIRE', label: 'Daire' },
@@ -77,11 +47,11 @@ const CURRENCIES = [
   { value: 'EUR', label: 'EUR' },
 ];
 
-export default function EditPropertyPage() {
+export default function AdminPropertyEditPage() {
   const { user, loading, logout } = useAdmin();
   const router = useRouter();
-  const params = useParams();
-  const propertyId = params.id as string;
+  const params = useParams() as RouteParams | null;
+  const propertyId = params?.id ?? null;
   
   const [property, setProperty] = useState<Property | null>(null);
   const [loadingProperty, setLoadingProperty] = useState(true);
@@ -114,6 +84,12 @@ export default function EditPropertyPage() {
   });
 
   useEffect(() => {
+    if (!propertyId) {
+      // id yoksa listeye dön
+      router.replace('/admin/ilanlar');
+      return;
+    }
+
     const fetchProperty = async () => {
       try {
         setLoadingProperty(true);
@@ -124,12 +100,12 @@ export default function EditPropertyPage() {
         setFormData({
           title: propertyData.title,
           slug: propertyData.slug,
-          description: propertyData.description,
+          description: propertyData.description || '',
           type: propertyData.type as any,
           status: propertyData.status as any,
-          price: propertyData.price.toString(),
+          price: propertyData.price?.toString() || '',
           currency: propertyData.currency as any,
-          rooms: propertyData.rooms,
+          rooms: propertyData.rooms || '',
           bath: propertyData.bath?.toString() || '',
           netM2: propertyData.netM2?.toString() || '',
           grossM2: propertyData.grossM2?.toString() || '',
@@ -138,21 +114,21 @@ export default function EditPropertyPage() {
           heating: propertyData.heating || '',
           age: propertyData.age?.toString() || '',
           furnished: propertyData.furnished || false,
-          city: propertyData.location.city,
-          district: propertyData.location.district,
-          neighborhood: propertyData.location.neighborhood || '',
-          address: propertyData.location.address || '',
-          published: propertyData.published,
-          agentId: propertyData.agentId,
+          city: propertyData.location?.city || '',
+          district: propertyData.location?.district || '',
+          neighborhood: propertyData.location?.neighborhood || '',
+          address: propertyData.location?.address || '',
+          published: propertyData.published || false,
+          agentId: propertyData.agentId || '',
         });
 
         // Mevcut görselleri yükle
-        const existingImages: UploadedFile[] = propertyData.images.map((img, index) => ({
+        const existingImages: UploadedFile[] = (propertyData.images || []).map((img, index) => ({
           url: img.url,
           key: img.id,
           contentType: 'image/jpeg', // Varsayılan
           alt: img.alt || '',
-          order: img.order,
+          order: img.order || index,
           isCover: index === 0, // İlk görsel kapak
         }));
         setUploadedImages(existingImages);
@@ -168,7 +144,7 @@ export default function EditPropertyPage() {
     if (!loading && propertyId) {
       fetchProperty();
     }
-  }, [loading, propertyId]);
+  }, [loading, propertyId, router]);
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -187,6 +163,11 @@ export default function EditPropertyPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!propertyId) {
+      alert('İlan ID bulunamadı');
+      return;
+    }
     
     if (!formData.title || !formData.price || !formData.city || !formData.district) {
       alert('Lütfen zorunlu alanları doldurun');
